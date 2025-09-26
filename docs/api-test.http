@@ -1,0 +1,554 @@
+@host = http://localhost:3000
+@user_id = 68d6993f514a85a5ff85762b
+@badge_id = "68d6a449340d68a2090e6408"
+@request_id = your-badge-request-id-here
+@auth_token = your-admin-auth-token-here
+@base_user_token = your-base-user-token-here
+@reset_token = your-reset-token-here
+
+# =============================================================================
+# AUTHENTICATION ENDPOINTS
+# =============================================================================
+
+### Sign Up - Create new user account
+POST {{host}}/api/auth/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "githubUsername": "johnsmith2024",
+  "email": "john.smith@example.com",
+  "password": "securepass123"
+}
+
+### Sign Up - Validation errors (missing fields)
+POST {{host}}/api/auth/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "email": "invalid-email",
+  "password": "123"
+}
+
+### Sign Up - Duplicate email
+POST {{host}}/api/auth/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "githubUsername": "janedoe2024",
+  "email": "john.smith@example.com",
+  "password": "password123"
+}
+
+### Sign In - Valid credentials
+POST {{host}}/api/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "john.smith@example.com",
+  "password": "securepass123"
+}
+
+### Sign In - Invalid credentials
+POST {{host}}/api/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "john.smith@example.com",
+  "password": "wrongpassword"
+}
+
+### Sign In - Non-existent user
+POST {{host}}/api/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+### Sign In - Validation errors
+POST {{host}}/api/auth/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": ""
+}
+
+### Get Current User (requires authentication)
+GET {{host}}/api/auth/me HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Current User - No token
+GET {{host}}/api/auth/me HTTP/1.1
+Content-Type: application/json
+
+### Get Current User - Invalid token
+GET {{host}}/api/auth/me HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer invalid-token
+
+### Forgot Password - Valid email
+POST {{host}}/api/auth/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "john.smith@example.com"
+}
+
+### Forgot Password - Non-existent email
+POST {{host}}/api/auth/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com"
+}
+
+### Forgot Password - Missing email
+POST {{host}}/api/auth/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": ""
+}
+
+### Reset Password - Valid token
+POST {{host}}/api/auth/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "token": "{{reset_token}}",
+  "password": "newpassword123"
+}
+
+### Reset Password - Invalid token
+POST {{host}}/api/auth/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "token": "invalid-token",
+  "password": "newpassword123"
+}
+
+### Reset Password - Validation errors
+POST {{host}}/api/auth/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "token": "",
+  "password": "123"
+}
+
+### Change Password (requires authentication)
+POST {{host}}/api/auth/change-password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "currentPassword": "securepass123",
+  "newPassword": "newsecurepass123"
+}
+
+### Change Password - Wrong current password
+POST {{host}}/api/auth/change-password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "currentPassword": "wrongpassword",
+  "newPassword": "newsecurepass123"
+}
+
+### Change Password - Validation errors
+POST {{host}}/api/auth/change-password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "currentPassword": "",
+  "newPassword": "123"
+}
+
+### Change Password - No authentication
+POST {{host}}/api/auth/change-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "currentPassword": "securepass123",
+  "newPassword": "newsecurepass123"
+}
+
+# =============================================================================
+# USER ENDPOINTS
+# =============================================================================
+
+### Get all users
+GET {{host}}/api/users HTTP/1.1
+Content-Type: application/json
+
+### Create user (legacy endpoint - consider using sign-up instead)
+POST {{host}}/api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "githubUsername": "janedoe",
+  "email": "jane.doe@example.com",
+  "password": "password123"
+}
+
+### Get specific user
+GET {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+
+### Get user's badges
+GET {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+### Award badge to user
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Award badge to user - Missing badgeId
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "badgeId": ""
+}
+
+### Award badge to user - Invalid badgeId
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "badgeId": "invalid-badge-id"
+}
+
+# =============================================================================
+# BADGE ENDPOINTS
+# =============================================================================
+
+### Get all badges
+GET {{host}}/api/badges HTTP/1.1
+Content-Type: application/json
+
+### Create new badge
+POST {{host}}/api/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "New Badge 1",
+  "description": "This is a new badge",
+  "imageURL": "http://example.com/new-badge.png"
+}
+
+### Create badge - Validation errors
+POST {{host}}/api/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "",
+  "imageURL": ""
+}
+
+### Create badge - Missing fields
+POST {{host}}/api/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Incomplete Badge"
+}
+
+# =============================================================================
+# BADGE REQUEST ENDPOINTS
+# =============================================================================
+
+### Create Badge Request (base users can request badges)
+POST {{host}}/api/badge-requests HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Create Badge Request - Missing badgeId
+POST {{host}}/api/badge-requests HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "badgeId": ""
+}
+
+### Create Badge Request - No authentication
+POST {{host}}/api/badge-requests HTTP/1.1
+Content-Type: application/json
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Get Badge Requests - Admin view (all requests)
+GET {{host}}/api/badge-requests?status=pending HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Badge Requests - Filter by status
+GET {{host}}/api/badge-requests?status=approved&page=1&limit=10 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Badge Requests - Non-admin attempt
+GET {{host}}/api/badge-requests HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+### Get My Badge Requests (user's own requests)
+GET {{host}}/api/users/my-badge-requests HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+### Get My Badge Requests - Filter by status
+GET {{host}}/api/users/my-badge-requests?status=pending HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+### Approve Badge Request (admin only)
+PATCH {{host}}/api/badge-requests/{{request_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "action": "approve"
+}
+
+### Reject Badge Request (admin only)
+PATCH {{host}}/api/badge-requests/{{request_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "action": "reject"
+}
+
+### Review Badge Request - Invalid action
+PATCH {{host}}/api/badge-requests/{{request_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "action": "invalid"
+}
+
+### Review Badge Request - Non-admin attempt
+PATCH {{host}}/api/badge-requests/{{request_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "action": "approve"
+}
+
+# =============================================================================
+# SOCIAL LINKS ENDPOINTS
+# =============================================================================
+
+### Update Social Links (authenticated users)
+PATCH {{host}}/api/users/social-links HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "socialLinks": {
+    "twitter": "https://twitter.com/johndoe",
+    "linkedin": "https://linkedin.com/in/johndoe",
+    "website": "https://johndoe.com",
+    "portfolio": "https://portfolio.johndoe.com"
+  }
+}
+
+### Update Social Links - Partial update
+PATCH {{host}}/api/users/social-links HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "socialLinks": {
+    "twitter": "https://twitter.com/newhandle"
+  }
+}
+
+### Update Social Links - Invalid URL
+PATCH {{host}}/api/users/social-links HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "socialLinks": {
+    "website": "not-a-valid-url"
+  }
+}
+
+### Update Social Links - Invalid field
+PATCH {{host}}/api/users/social-links HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "socialLinks": {
+    "invalidField": "https://example.com"
+  }
+}
+
+### Update Social Links - No authentication
+PATCH {{host}}/api/users/social-links HTTP/1.1
+Content-Type: application/json
+
+{
+  "socialLinks": {
+    "website": "https://example.com"
+  }
+}
+
+# =============================================================================
+# PUBLIC ENDPOINTS (NO AUTHENTICATION REQUIRED)
+# =============================================================================
+
+### Get User Profile (public)
+GET {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+
+### Get User Badges (public)
+GET {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+### Get All Badges (public)
+GET {{host}}/api/badges HTTP/1.1
+Content-Type: application/json
+
+# =============================================================================
+# ADMIN ENDPOINTS (REQUIRE ADMIN TOKEN)
+# =============================================================================
+
+### Update User Role - Promote user to admin (requires admin token)
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "role": "admin"
+}
+
+### Update User Role - Demote user to base (requires admin token)  
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "role": "base"
+}
+
+### Update User Role - Invalid role (requires admin token)
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "role": "invalid"
+}
+
+### Update User Role - Missing role (requires admin token)
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "role": ""
+}
+
+### Update User Role - Non-admin user attempt
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer your-base-user-token-here
+
+{
+  "role": "admin"
+}
+
+### Update User Role - No authentication
+PATCH {{host}}/api/users/{{user_id}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "role": "admin"
+}
+
+### Update User Role - Invalid user ID (requires admin token)
+PATCH {{host}}/api/users/invalid-user-id HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "role": "admin"
+}
+
+# =============================================================================
+# BADGE AWARDING (ADMIN ONLY)
+# =============================================================================
+
+### Award badge to user (admin only)
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Award badge to user - Non-admin attempt
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{base_user_token}}
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Award badge to user - No authentication
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+
+{
+  "badgeId": {{badge_id}}
+}
+
+### Award badge to user - Invalid token
+POST {{host}}/api/users/{{user_id}}/badges HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer invalid-token
+
+{
+  "badgeId": {{badge_id}}
+}
+
+# =============================================================================
+# API INFO
+# =============================================================================
+
+### API Welcome message
+GET {{host}}/api HTTP/1.1
+Content-Type: application/json
