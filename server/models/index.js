@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 
 const UserSchema = new mongoose.Schema(
   {
@@ -123,7 +123,7 @@ const UserBadgeRequest = mongoose.model(
   UserBadgeRequestSchema
 )
 
-module.exports = {
+export {
   User,
   Badge,
   UserBadge,

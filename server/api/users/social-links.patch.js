@@ -21,7 +21,7 @@ const validationErrors = (details) => {
     return errors
   }
 
-  const allowedFields = ['twitter', 'linkedin', 'website', 'portfolio']
+  const allowedFields = ['twitter', 'linkedin', 'website', 'portfolio', 'gitlab', 'stackoverflow']
   const providedFields = Object.keys(socialLinks)
   
   // Check for invalid fields
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
     await connectToDB()
 
     // Update only the social links
-    const allowedFields = ['twitter', 'linkedin', 'website', 'portfolio']
+    const allowedFields = ['twitter', 'linkedin', 'website', 'portfolio', 'gitlab', 'stackoverflow']
     const socialLinksUpdate = {}
 
     for (const field of allowedFields) {

@@ -5,15 +5,16 @@
  * Usage: node scripts/create-admin.js
  */
 
-const mongoose = require('mongoose')
-const readline = require('readline')
+import mongoose from 'mongoose'
+import readline from 'readline'
+import dotenv from 'dotenv'
 
 // Import models
-const { User } = require('../server/models/index.js')
+import { User } from '../server/models/index.js'
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 })
 
 const question = (query) => {
@@ -32,9 +33,10 @@ const createAdminUser = async () => {
     console.log('🚀 NST SDC Badges - Create Admin User Script\n')
 
     // Load environment variables if available
-    require('dotenv').config({ path: '.env' })
+    dotenv.config({ path: '.env' })
 
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/badges'
+    const MONGODB_URI =
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/badges'
 
     // Connect to MongoDB
     console.log('Connecting to MongoDB...')
@@ -47,8 +49,10 @@ const createAdminUser = async () => {
       console.log('⚠️  An admin user already exists in the database.')
       console.log(`   Email: ${existingAdmin.email}`)
       console.log(`   Name: ${existingAdmin.fullName}\n`)
-      
-      const proceed = await question('Do you want to create another admin user? (y/N): ')
+
+      const proceed = await question(
+        'Do you want to create another admin user? (y/N): '
+      )
       if (proceed.toLowerCase() !== 'y' && proceed.toLowerCase() !== 'yes') {
         console.log('❌ Cancelled by user')
         return
@@ -75,7 +79,9 @@ const createAdminUser = async () => {
       }
 
       // Check if GitHub username is already taken
-      const existingGithubUser = await User.findOne({ githubUsername: githubUsername.trim() })
+      const existingGithubUser = await User.findOne({
+        githubUsername: githubUsername.trim(),
+      })
       if (existingGithubUser) {
         console.log('❌ This GitHub username is already taken')
         githubUsername = null
@@ -97,7 +103,9 @@ const createAdminUser = async () => {
       }
 
       // Check if email is already taken
-      const existingEmailUser = await User.findOne({ email: email.toLowerCase().trim() })
+      const existingEmailUser = await User.findOne({
+        email: email.toLowerCase().trim(),
+      })
       if (existingEmailUser) {
         console.log('❌ This email is already taken')
         email = null
@@ -122,7 +130,7 @@ const createAdminUser = async () => {
       githubUsername: githubUsername.trim(),
       email: email.toLowerCase().trim(),
       password: password,
-      role: 'admin'
+      role: 'admin',
     })
 
     await adminUser.save()
@@ -136,10 +144,9 @@ const createAdminUser = async () => {
     console.log(`   ID: ${adminUser._id}\n`)
 
     console.log('🎉 You can now use these credentials to sign in as an admin!')
-
   } catch (error) {
     console.error('❌ Error creating admin user:', error.message)
-    
+
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0]
       console.error(`   The ${field} is already in use.`)

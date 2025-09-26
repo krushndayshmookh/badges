@@ -1,8 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 let connected = false
 
-async function connectToDB() {
+export async function connectToDB() {
   if (connected) {
     return
   }
@@ -16,5 +16,3 @@ async function connectToDB() {
     throw error
   }
 }
-
-module.exports = { connectToDB }
