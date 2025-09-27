@@ -70,7 +70,7 @@
                   >Image URL (optional):</label
                 >
                 <input
-                  v-model="createForm.imageUrl"
+                  v-model="createForm.imageURL"
                   type="url"
                   style="width: 100%; padding: 0.5rem; border: 1px solid #ddd"
                   placeholder="https://example.com/badge-image.png" >
@@ -181,9 +181,9 @@
                   <p v-if="badge.category" style="margin: 0.5rem 0 0 0">
                     <strong>Category:</strong> {{ badge.category }}
                   </p>
-                  <p v-if="badge.imageUrl" style="margin: 0.5rem 0 0 0">
+                  <p v-if="badge.imageURL" style="margin: 0.5rem 0 0 0">
                     <img
-                      :src="badge.imageUrl"
+                      :src="badge.imageURL"
                       :alt="badge.name"
                       style="max-width: 50px; max-height: 50px" >
                   </p>
@@ -368,7 +368,7 @@
                   >Image URL:</label
                 >
                 <input
-                  v-model="editForm.imageUrl"
+                  v-model="editForm.imageURL"
                   type="url"
                   style="
                     width: 100%;
@@ -466,7 +466,7 @@ const createForm = ref({
   name: '',
   description: '',
   level: '',
-  imageUrl: '',
+  imageURL: '',
   category: '',
 })
 
@@ -474,7 +474,7 @@ const editForm = ref({
   name: '',
   description: '',
   level: '',
-  imageUrl: '',
+  imageURL: '',
   category: '',
 })
 
@@ -575,7 +575,7 @@ async function createBadge() {
         name: '',
         description: '',
         level: '',
-        imageUrl: '',
+        imageURL: '',
         category: '',
       }
       await loadBadges()
@@ -594,7 +594,7 @@ function editBadge(badge) {
     name: badge.name,
     description: badge.description,
     level: badge.level,
-    imageUrl: badge.imageUrl || '',
+    imageURL: badge.imageURL || '',
     category: badge.category || '',
   }
 }
@@ -605,7 +605,7 @@ function cancelEdit() {
     name: '',
     description: '',
     level: '',
-    imageUrl: '',
+    imageURL: '',
     category: '',
   }
 }
