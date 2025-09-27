@@ -30,7 +30,7 @@ const validateEmail = (email) => {
 
 const createAdminUser = async () => {
   try {
-    console.log('🚀 NST SDC Badges - Create Admin User Script\n')
+    console.info('🚀 NST SDC Badges - Create Admin User Script\n')
 
     // Load environment variables if available
     dotenv.config({ path: '.env' })
@@ -39,32 +39,32 @@ const createAdminUser = async () => {
       process.env.MONGODB_URI || 'mongodb://localhost:27017/badges'
 
     // Connect to MongoDB
-    console.log('Connecting to MongoDB...')
+    console.info('Connecting to MongoDB...')
     await mongoose.connect(MONGODB_URI)
-    console.log('✅ Connected to MongoDB\n')
+    console.info('✅ Connected to MongoDB\n')
 
     // Check if any admin users already exist
     const existingAdmin = await User.findOne({ role: 'admin' })
     if (existingAdmin) {
-      console.log('⚠️  An admin user already exists in the database.')
-      console.log(`   Email: ${existingAdmin.email}`)
-      console.log(`   Name: ${existingAdmin.fullName}\n`)
+      console.info('⚠️  An admin user already exists in the database.')
+      console.info(`   Email: ${existingAdmin.email}`)
+      console.info(`   Name: ${existingAdmin.fullName}\n`)
 
       const proceed = await question(
         'Do you want to create another admin user? (y/N): '
       )
       if (proceed.toLowerCase() !== 'y' && proceed.toLowerCase() !== 'yes') {
-        console.log('❌ Cancelled by user')
+        console.info('❌ Cancelled by user')
         return
       }
     }
 
     // Collect user information
-    console.log('Please provide the admin user details:\n')
+    console.info('Please provide the admin user details:\n')
 
     const firstName = await question('First Name: ')
     if (!firstName.trim()) {
-      console.log('❌ First name is required')
+      console.info('❌ First name is required')
       return
     }
 
@@ -74,7 +74,7 @@ const createAdminUser = async () => {
     do {
       githubUsername = await question('GitHub Username: ')
       if (!githubUsername.trim()) {
-        console.log('❌ GitHub username is required')
+        console.info('❌ GitHub username is required')
         continue
       }
 
@@ -83,7 +83,7 @@ const createAdminUser = async () => {
         githubUsername: githubUsername.trim(),
       })
       if (existingGithubUser) {
-        console.log('❌ This GitHub username is already taken')
+        console.info('❌ This GitHub username is already taken')
         githubUsername = null
       }
     } while (!githubUsername)
@@ -92,12 +92,12 @@ const createAdminUser = async () => {
     do {
       email = await question('Email: ')
       if (!email.trim()) {
-        console.log('❌ Email is required')
+        console.info('❌ Email is required')
         continue
       }
 
       if (!validateEmail(email)) {
-        console.log('❌ Please provide a valid email address')
+        console.info('❌ Please provide a valid email address')
         email = null
         continue
       }
@@ -107,7 +107,7 @@ const createAdminUser = async () => {
         email: email.toLowerCase().trim(),
       })
       if (existingEmailUser) {
-        console.log('❌ This email is already taken')
+        console.info('❌ This email is already taken')
         email = null
       }
     } while (!email)
@@ -116,12 +116,12 @@ const createAdminUser = async () => {
     do {
       password = await question('Password (min 6 characters): ')
       if (!password || password.length < 6) {
-        console.log('❌ Password must be at least 6 characters long')
+        console.info('❌ Password must be at least 6 characters long')
         password = null
       }
     } while (!password)
 
-    console.log('\n📝 Creating admin user...')
+    console.info('\n📝 Creating admin user...')
 
     // Create the admin user
     const adminUser = new User({
@@ -135,15 +135,15 @@ const createAdminUser = async () => {
 
     await adminUser.save()
 
-    console.log('✅ Admin user created successfully!\n')
-    console.log('📋 Admin User Details:')
-    console.log(`   Name: ${adminUser.fullName}`)
-    console.log(`   Email: ${adminUser.email}`)
-    console.log(`   GitHub: ${adminUser.githubUsername}`)
-    console.log(`   Role: ${adminUser.role}`)
-    console.log(`   ID: ${adminUser._id}\n`)
+    console.info('✅ Admin user created successfully!\n')
+    console.info('📋 Admin User Details:')
+    console.info(`   Name: ${adminUser.fullName}`)
+    console.info(`   Email: ${adminUser.email}`)
+    console.info(`   GitHub: ${adminUser.githubUsername}`)
+    console.info(`   Role: ${adminUser.role}`)
+    console.info(`   ID: ${adminUser._id}\n`)
 
-    console.log('🎉 You can now use these credentials to sign in as an admin!')
+    console.info('🎉 You can now use these credentials to sign in as an admin!')
   } catch (error) {
     console.error('❌ Error creating admin user:', error.message)
 
@@ -154,14 +154,14 @@ const createAdminUser = async () => {
   } finally {
     rl.close()
     await mongoose.connection.close()
-    console.log('\n👋 Disconnected from MongoDB')
+    console.info('\n👋 Disconnected from MongoDB')
     process.exit(0)
   }
 }
 
 // Handle script termination
 process.on('SIGINT', async () => {
-  console.log('\n👋 Script interrupted by user')
+  console.info('\n👋 Script interrupted by user')
   rl.close()
   await mongoose.connection.close()
   process.exit(0)
